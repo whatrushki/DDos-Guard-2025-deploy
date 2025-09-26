@@ -19,6 +19,3 @@ class GitManager:
       print(e)
     else:
       print("Repo cloned successfully!")
-
-# gitManager = GitManager("https://github.com/NekrasovVM/Bitrix.git", "/media/nekra/Acer/Ubuntu/source/test_dir")
-# gitManager.clone_repo()
