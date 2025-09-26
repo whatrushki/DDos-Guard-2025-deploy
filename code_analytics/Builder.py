@@ -150,6 +150,10 @@ class DjangoRunner(PipelineComponent):
 
     def contribute(self, sections: dict):
         sections['cmd'].append(
+            "RUN pip install Django")
+        sections['cmd'].append(
+            f"RUN python {self.entry_point} migrate")
+        sections['cmd'].append(
             f'CMD ["python", "{self.entry_point}", "runserver", "0.0.0.0:8000"]')  # Не добавляем gunicorn автоматически
 
     def modify_compose_service(self, service: dict):
