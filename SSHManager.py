@@ -1,5 +1,5 @@
 import paramiko
-import ConnectionManager
+from ConnectionManager import ConnectionManager
 
 class SSHManager(ConnectionManager):
   def __init__(self, host, user, secret, port=22):
@@ -12,6 +12,8 @@ class SSHManager(ConnectionManager):
       self.client.connect(hostname=self.host, username=self.user, password=self.secret, port=self.port)
     except Exception as e:
       print(e)
+    else:
+      print("Connection opened successfully!")
 
   def execute_command(self, command: str):
     if self.is_connection_opened():
@@ -19,4 +21,8 @@ class SSHManager(ConnectionManager):
 
       print("\033[4mВывод команды:\u001b[0m")
       for line in iter(stdout.readline, ""):
+        print(line, end="")
+
+      print("\033[4mВывод ошибок:\u001b[0m")
+      for line in iter(stderr.readline, ""):
         print(line, end="")
