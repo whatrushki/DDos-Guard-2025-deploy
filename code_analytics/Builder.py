@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import yaml
 import fnmatch  # Для игнора паттернов
+import re
 
 
 class Builder(ABC):
@@ -189,14 +190,37 @@ class PythonBuilder(Builder):
         elif deps['type'] == 'venv':
             self.add_component(VenvInstaller(self.project_path))
 
+    def _find_file(self, filename, root, files):
+        print(files)
+        if filename in files:
+            file = Path(root) / filename
+            relative_path = file.relative_to(self.project_path).as_posix()
+            project_dir = file.parent.name
+            if filename == "manage.py":
+                settings_module = f"{project_dir}.settings"
+            return relative_path, settings_module
+        else:
+            return None
+
     def _detect_entry_point(self) -> tuple[str, str]:
         for root, _, files in self._walk_with_depth():
-            if 'manage.py' in files:
-                file = Path(root) / 'manage.py'
-                relative_path = file.relative_to(self.project_path).as_posix()
-                project_dir = file.parent.name
-                settings_module = f"{project_dir}.settings"
-                return relative_path, settings_module
+            result = self._find_file("manage.py", root, files)
+            if result != None:
+                return result
+
+            result = self._find_file("main.py", root, files)
+            if result != None:
+                return result
+            
+            if "README.md" in files:
+                file = Path(root) / "README.md"
+                with open(str(file), 'r') as f:
+                    content = f.read()
+                search_res = re.search("python .*\.py", content).group(0)
+                result = str(search_res).split(" ")[-1]
+                return result, None
+
+
             # Проверка кандидатов и __main__ аналогично, но в loop
         raise ValueError("Не удалось найти точку входа.")
 
