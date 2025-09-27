@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  python-gui-app:
+    build: .
+    container_name: python-gui-application
+    volumes:
+      - .:/app
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - DISPLAY=${DISPLAY}
+    working_dir: /app
+    stdin_open: true
+    tty: true
