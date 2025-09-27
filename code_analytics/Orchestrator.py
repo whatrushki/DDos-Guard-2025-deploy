@@ -1,20 +1,22 @@
-import os
-from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Type
 
 import yaml
 
+from Builder import Builder, PythonBuilder
 # Импортируем из предыдущих скриптов
 # Предполагаем, что analyze_code_languages.py и deployment_builder.py в той же директории
 from LanguageDetector import analyze_directory, ProgrammingLanguage
-from Builder import Builder, PythonBuilder, JavaBuilder, KotlinBuilder
+from code_analytics.builders.js.JSBuilder import JSBuilder
+from code_analytics.builders.jvm.Java import JavaBuilder
+from code_analytics.builders.jvm.Kotlin import KotlinBuilder
 
 # Маппинг языков к их билдерам
 BUILDER_MAPPING: Dict[ProgrammingLanguage, Type[Builder]] = {
     ProgrammingLanguage.PYTHON: PythonBuilder,
     ProgrammingLanguage.JAVA: JavaBuilder,
     ProgrammingLanguage.KOTLIN: KotlinBuilder,
+    ProgrammingLanguage.JAVASCRIPT: JSBuilder,
 }
 
 
